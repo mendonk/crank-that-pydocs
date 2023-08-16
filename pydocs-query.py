@@ -42,6 +42,6 @@ qa_llm = RetrievalQA.from_chain_type(llm=llm,
                                      chain_type_kwargs={'prompt': prompt})
 
 # ask the AI chat about information in our local files
-prompt = "What version of the Python client do I need for DataStax Astra Streaming?"
+prompt = "What is DataStax Astra Streaming?"
 output = qa_llm({'query': prompt})
 print(output["result"])
