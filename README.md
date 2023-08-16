@@ -3,7 +3,15 @@
 Scrape website text to a faiss db and query that db with a chatbot.
 
 To dos:
-1. Make pydocs-query return meaningful text, not vector addresses.
+1. Add the model as a dependency instead of a manual download.
+2. Error control and logging.
+3. Fine-tune model for better results or replace altogether.
+
+## Download llama 2
+
+This uses the lightest weight (2.7 GB) model of Llama 2 I could find.
+7B isn't really built to be a chatbot, so the results aren't brilliant - it requires MORE POWER.
+The only way I know to make this work right now is to download the model binary from Hugging Face [here](https://huggingface.co/localmodels/Llama-2-7B-Chat-ggml/blob/main/llama-2-7b-chat.ggmlv3.q2_K.bin) and put it into the root of this repository.
 
 ## Run the program
 
@@ -13,10 +21,9 @@ A /faiss directory will be created.
 2. Run `pydocs-query.py` to query the db at faiss/index.faiss.
 The query currently only returns the vector addresses, not meaningful text.
 
-
-## Virtual env for testing
+## Create virtual env for testing
 Create virtual environment and install packages with pip3.
-If you use "test" for your venv-name, git won't track it.
+Use "test" for your venv-name so git won't track it.
 
 ```python3
 python3 -m venv <venv-name>

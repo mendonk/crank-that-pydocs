@@ -10,7 +10,7 @@ import bs4
 from sentence_transformers import SentenceTransformer
 
 # define what documents to load
-loader = WebBaseLoader("https://www.espn.com")
+loader = WebBaseLoader("https://docs.datastax.com/en/streaming/astra-streaming/index.html")
 loader.requests_kwargs = {'verify':False}
 
 # interpret information in the documents
@@ -26,3 +26,4 @@ embeddings = HuggingFaceEmbeddings(
 db = FAISS.from_documents(texts,embeddings)
 db.save_local("faiss")
 print("Database saved to 'faiss' directory.")
+

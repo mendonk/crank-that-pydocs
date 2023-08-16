@@ -1,37 +1,47 @@
-import faiss
-import numpy as np
-from sentence_transformers import SentenceTransformer
+"""
+This script reads the database of information from local text files
+and uses a large language model to answer questions about their content.
+"""
 
-class FaissVectorQuery:
-    def __init__(self, index_path, embedding_model='sentence-transformers/all-MiniLM-L6-v2'):
-        self.index = faiss.read_index(index_path)
-        self.model = SentenceTransformer(embedding_model)
+from langchain.llms import CTransformers
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
+from langchain import PromptTemplate
+from langchain.chains import RetrievalQA
 
-    def search(self, query_text, k=5):
-        vector = self.model.encode([query_text])[0]
-        distances, indices = self.index.search(np.array([vector]).astype('float32'), k)
-        return distances[0], indices[0]
+# prepare the template we will use when prompting the AI
+template = """Use the following pieces of information to answer the user's question.
+If you don't know the answer, just say that you don't know, don't try to make up an answer.
+Context: {context}
+Question: {question}
+Only return the helpful answer below and nothing else.
+Don't repeat yourself.
+Helpful answer:
+"""
 
-def main():
-    index_path = "faiss/index.faiss"
-    vector_query = FaissVectorQuery(index_path)
+# load the language model
+llm = CTransformers(model='./llama-2-7b-chat.ggmlv3.q2_K.bin',
+                    model_type='llama',
+                    config={'max_new_tokens': 256, 'temperature': 0.01})
 
-    while True:
-        try:
-            query = input("\nEnter your query text (or type 'exit' to quit): ")
-            
-            if query.lower() == 'exit':
-                break
-            
-            distances, indices = vector_query.search(query)
-            print(f"Top {len(indices)} matching vector indices: {indices}")
-            print(f"Distances for these vectors: {distances}")
-        
-        except KeyboardInterrupt:
-            print("\nExiting the program.")
-            break
-        except Exception as e:
-            print(f"An error occurred: {e}")
+# load the interpreted information from the local database
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2",
+    model_kwargs={'device': 'cpu'})
+db = FAISS.load_local("faiss", embeddings)
 
-if __name__ == "__main__":
-    main()
+# prepare a version of the llm pre-loaded with the local content
+retriever = db.as_retriever(search_kwargs={'k': 2})
+prompt = PromptTemplate(
+    template=template,
+    input_variables=['context', 'question'])
+qa_llm = RetrievalQA.from_chain_type(llm=llm,
+                                     chain_type='stuff',
+                                     retriever=retriever,
+                                     return_source_documents=True,
+                                     chain_type_kwargs={'prompt': prompt})
+
+# ask the AI chat about information in our local files
+prompt = "What version of the Python client do I need for DataStax Astra Streaming?"
+output = qa_llm({'query': prompt})
+print(output["result"])
