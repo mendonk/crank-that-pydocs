@@ -9,7 +9,7 @@ from langchain.vectorstores import FAISS
 import bs4
 
 # define what documents to load
-loader = WebBaseLoader("http://www.datastax.com/en/streaming/streaming/index.html")
+loader = WebBaseLoader("https://docs.datastax.com/en/streaming")
 
 # interpret information in the documents
 documents = loader.load()

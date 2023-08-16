@@ -1,24 +1,34 @@
-from langchain.document_loaders import WebBaseLoader
-from langchain.vectorstores import Chroma
-from langchain.llms import GPT4All
-from langchain.embeddings import GPT4AllEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain import PromptTemplate, LLMChain
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from bs4 import BeautifulSoup
+import faiss
+import numpy as np
+from sentence_transformers import SentenceTransformer
 
-llm = GPT4All(
-    model="/Users/mendon.kissling/Library/Application Support/nomic.ai/GPT4All/orca-mini-3b.ggmlv3.q4_0.bin",
-    max_tokens=2048,
-)
+class FaissChatbot:
+    def __init__(self, index_path, embedding_model='sentence-transformers/all-MiniLM-L6-v2'):
+        self.index = faiss.read_index(index_path)
+        self.model = SentenceTransformer(embedding_model)
 
-question = "What are the approaches to Task Decomposition?"
+    def query(self, question):
+        vector = self.model.encode([question])[0]
+        D, I = self.index.search(np.array([vector]).astype('float32'), k=1)
+        return D[0][0], I[0][0]
 
-template = """Question: {question}
+def main():
+    index_path = "faiss/index.faiss"
+    chatbot = FaissChatbot(index_path)
 
-Answer: Let's think step by step."""
+    while True:
+        try:
+            question = input("Ask a question: ")
+            distance, index = chatbot.query(question)
+            # For now, we're returning the index of the most similar information. 
+            # In a real-world scenario, you might want to retrieve the actual information using this index.
+            print(f"Your answer can be found in document ID: {index}")
+        
+        except KeyboardInterrupt:
+            print("\nExiting the chatbot.")
+            break
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
-prompt = PromptTemplate(template=template, input_variables=["question"])
-
-llm_chain = LLMChain(prompt=prompt, llm=llm)
-llm_chain.run(question)
+if __name__ == "__main__":
+    main()
