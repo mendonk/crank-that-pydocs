@@ -7,9 +7,11 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 import bs4
+from sentence_transformers import SentenceTransformer
 
 # define what documents to load
-loader = WebBaseLoader("https://docs.datastax.com/en/streaming")
+loader = WebBaseLoader("https://www.espn.com")
+loader.requests_kwargs = {'verify':False}
 
 # interpret information in the documents
 documents = loader.load()
