@@ -1,11 +1,12 @@
 # crank-that-pydocs
 
-Scrape website text to a faiss db and query that db with a chatbot.
+Scrape website text to a local faiss db and query that db with a chatbot.
 
 To dos:
 1. Add the model as a dependency instead of a manual download.
 2. Error control and logging.
 3. Fine-tune model for better results or replace altogether.
+4. Make the chat stay open.
 
 ## Download llama 2
 
@@ -16,10 +17,12 @@ The only way I know to make this work right now is to download the model binary 
 ## Run the program
 
 1. Run `pydocs-load-db.py` to vectorize the content at the URL on line 13.
+Change the URL to query different websites.
 A /faiss directory will be created.
 
 2. Run `pydocs-query.py` to query the db at faiss/index.faiss.
-The query currently only returns the vector addresses, not meaningful text.
+The query will return an answer, sometimes with a bunch of text repeating.
+Change the prompt on line 45 to ask different questions.
 
 ## Create virtual env for testing
 Create virtual environment and install packages with pip3.
