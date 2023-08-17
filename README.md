@@ -7,6 +7,7 @@ To dos:
 2. Error control and logging.
 3. Fine-tune model for better results or replace altogether.
 4. Make the chat stay open.
+5. Add the option to scrape by sitemap.
 
 ## Download llama 2
 
