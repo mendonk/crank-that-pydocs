@@ -10,7 +10,7 @@ import bs4
 from sentence_transformers import SentenceTransformer
 
 # define what documents to load
-loader = WebBaseLoader("https://docs.datastax.com/en/streaming/astra-streaming/index.html")
+loader = WebBaseLoader("https://docs.langstream.ai")
 loader.requests_kwargs = {'verify':False}
 
 # interpret information in the documents
