@@ -1,6 +1,9 @@
 .venv
 test
 llama-2-7b-chat.ggmlv3.q2_K.bin
+.env
+venv/
 /pydocs
-.idea
 .vscode
+.idea
+secure-connect-vector (1).zip
