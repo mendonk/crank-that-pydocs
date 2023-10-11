@@ -5,7 +5,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 import faiss
-from faiss import IndexFlatL2
 import numpy as np
 
 load_dotenv()
