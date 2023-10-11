@@ -1,13 +1,9 @@
-import os
-from typing import List
 from langchain.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
-from dotenv import load_dotenv
 import faiss
 import numpy as np
-
-load_dotenv()
+from typing import List
 
 # Scrape the listed website
 loader = WebBaseLoader("https://docs.langstream.ai")
